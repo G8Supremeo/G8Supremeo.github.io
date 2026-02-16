@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.Oghenewoakpo | Process Control & Data Ops</title>
+    <!-- Technical Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            /* Industrial / Tech Palette */
+            --bg-color: #0b1120;
+            /* Deep Navy/Black */
+            --panel-bg: rgba(15, 23, 42, 0.85);
+            /* Slightly lighter navy */
+            --panel-border: rgba(56, 189, 248, 0.3);
+            /* Cyan border */
+
+            --text-main: #e2e8f0;
+            --text-dim: #94a3b8;
+
+            --accent-cyan: #06b6d4;
+            /* Cyan 500 */
+            --accent-amber: #f59e0b;
+            /* Amber 500 (Warnings/Industrial) */
+            --accent-green: #10b981;
+            /* Emerald 500 (Status OK) */
+
+            --grid-line: rgba(56, 189, 248, 0.05);
+            --font-tech: 'JetBrains Mono', monospace;
+            --font-body: 'Inter', sans-serif;
+
+            --glow-cyan: 0 0 10px rgba(6, 182, 212, 0.4);
+            --glow-green: 0 0 10px rgba(16, 185, 129, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            /* Hide horizontal scroll from animations */
+        }
+
+        /* --- BACKGROUND: SCHEMATIC GRID & TURBINES --- */
+        .schematic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        .turbine {
+            position: fixed;
+            border: 2px dashed rgba(6, 182, 212, 0.15);
+            border-radius: 50%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .turbine-1 {
+            width: 80vh;
+            height: 80vh;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: spin 60s linear infinite;
+        }
+
+        .turbine-2 {
+            width: 60vh;
+            height: 60vh;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-style: solid;
+            border-width: 1px;
+            border-color: rgba(6, 182, 212, 0.1);
+            animation: spin-rev 40s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        @keyframes spin-rev {
+            100% {
+                transform: translate(-50%, -50%) rotate(-360deg);
+            }
+        }
+
+        /* --- LAYOUT --- */
+        .wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            /* Sidebar | Main Content */
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- SIDEBAR: "SYSTEM STATUS" --- */
+        .sidebar {
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            backdrop-filter: blur(8px);
+            padding: 20px;
+            border-radius: 4px;
+            /* Slightly squarer for industrial look */
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before {
+            /* "Corner screws" effect */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                linear-gradient(135deg, var(--accent-cyan) 2px, transparent 2px) 0 0,
+                linear-gradient(225deg, var(--accent-cyan) 2px, transparent 2px) 100% 0,
+                linear-gradient(315deg, var(--accent-cyan) 2px, transparent 2px) 100% 100%,
+                linear-gradient(45deg, var(--accent-cyan) 2px, transparent 2px) 0 100%;
+            background-size: 8px 8px;
+            background-repeat: no-repeat;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .panel-header {
+            font-family: var(--font-tech);
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--panel-border);
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-tech);
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            color: var(--text-dim);
+        }
+
+        .metric-val {
+            color: var(--accent-green);
+        }
+
+        /* Live flickering indicator */
+        .status-light {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: var(--glow-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-header {
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: var(--font-tech);
+            font-size: 3rem;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '_';
+            animation: blink 1s step-start infinite;
+            color: var(--accent-cyan);
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            margin-top: 10px;
+            border-left: 3px solid var(--accent-amber);
+            padding-left: 15px;
+        }
+
+        /* --- SECTIONS --- */
+        h2 {
+            font-family: var(--font-tech);
+            color: var(--accent-cyan);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2::before {
+            content: '>';
+            color: var(--accent-amber);
+        }
+
+        /* --- PIPELINE TIMELINE --- */
+        .pipeline {
+            position: relative;
+            padding-left: 30px;
+            border-left: 2px solid rgba(56, 189, 248, 0.1);
+        }
+
+        .pipeline-item {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        /* Connection point (Value) */
+        .pipeline-item::before {
+            content: '';
+            position: absolute;
+            left: -36px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: var(--bg-color);
+            border: 2px solid var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        /* Highlighted line on hover/active */
+        .pipeline-item:hover::before {
+            background: var(--accent-cyan);
+        }
+
+        .role-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 0 12px 12px 12px;
+            transition: transform 0.2s;
+        }
+
+        .role-card:hover {
+            transform: translateX(5px);
+            border-color: var(--accent-cyan);
+        }
+
+        .role-title {
+            font-family: var(--font-tech);
+            color: var(--text-main);
+            font-weight: 700;
+            display: block;
+        }
+
+        .role-meta {
+            font-size: 0.85rem;
+            color: var(--accent-amber);
+            margin-bottom: 10px;
+            display: block;
+            font-family: var(--font-tech);
+        }
+
+        /* --- GRID AREAS --- */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .tech-tag {
+            font-family: var(--font-tech);
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            border: 1px solid var(--panel-border);
+            padding: 8px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .tech-tag:hover {
+            background: rgba(6, 182, 212, 0.1);
+            box-shadow: var(--glow-cyan);
+            border-color: var(--accent-cyan);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            font-family: var(--font-tech);
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            border-top: 1px solid var(--panel-border);
+            padding-top: 20px;
+        }
+
+        a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: #fff;
+        }
+
+        /* --- DECORATIVE EMOJIS --- */
+        .section-emoji {
+            position: absolute;
+            right: 20px;
+            top: -20px;
+            font-size: 6rem;
+            opacity: 0.15;
+            filter: grayscale(100%) drop-shadow(0 0 10px var(--accent-cyan));
+            pointer-events: none;
+            z-index: 1;
+            transition: all 0.5s ease;
+        }
+
+        .panel:hover .section-emoji {
+            opacity: 0.3;
+            transform: rotate(10deg) scale(1.1);
+            filter: grayscale(0%) drop-shadow(0 0 15px var(--accent-cyan));
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background Elements -->
+    <div class="schematic-bg"></div>
+    <div class="turbine turbine-1"></div>
+    <div class="turbine turbine-2"></div>
+
+    <div class="wrapper">
+
+        <!-- SIDEBAR: SENSOR DATA -->
+        <aside class="sidebar">
+            <div class="panel">
+                <div class="panel-header">
+                    <span>BIO_METRICS</span>
+                    <div class="status-light"></div>
+                </div>
+                <div class="metric-row">
+                    <span>AVAILABILITY</span>
+                    <span class="metric-val">READY</span>
+                </div>
+                <div class="metric-row">
+                    <span>LOCATION</span>
+                    <span class="metric-val">CA</span>
+                </div>
+                <div class="metric-row">
+                    <span>PHONE</span>
+                    <span class="metric-val">343-342-6280</span>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <span>SYS_LOAD</span>
+                    <span id="load-val">42%</span>
+                </div>
+                <div class="metric-row">
+                    <span>PROCESS_SAFETY</span>
+                    <span class="metric-val">OPTIMAL</span>
+                </div>
+                <div class="metric-row">
+                    <span>RELIABILITY</span>
+                    <span class="metric-val">99.9%</span>
+                </div>
+                <div class="metric-row">
+                    <span>LNG_YIELD</span>
+                    <span class="metric-val">MAX</span>
+                </div>
+                <!-- Simulated graph bar -->
+                <div style="height: 4px; width: 100%; background: #1e293b; margin-top: 10px; overflow: hidden;">
+                    <div id="bar-anim"
+                        style="height: 100%; width: 50%; background: var(--accent-cyan); transition: width 0.5s;"></div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">LINKS</div>
+                <div class="metric-row"><a href="mailto:Supreme.oghenewoakpo@gmail.com">EMAIL_UPLINK</a></div>
+                <div class="metric-row"><a href="https://linkedin.com/in/supreme-oghenewoakpo-195ab134"
+                        target="_blank">LINKEDIN_NODE</a></div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main>
+            <header class="main-header">
+                <h1>SUPREME O.</h1>
+                <div class="subtitle">
+                    OPERATIONS & PROCESS SAFETY LEADER<br>
+                    LNG // UTILITIES // PRODUCTION OPTIMIZATION
+                </div>
+            </header>
+
+            <section class="panel">
+                <div class="section-emoji">⚡</div>
+                <h2>LOG: SUMMARY</h2>
+                <p style="color: var(--text-dim);">
+                    Operations and process safety leader with extensive runtime in LNG utilities, production trains, and
+                    shipping operations.
+                    Currently executing as Operations Supervisor at Nigeria LNG Ltd.
+                    <br><br>
+                    <strong>PRIMARY DIRECTIVE:</strong> Maximize LNG yield, minimize flaring, and enforce process safety
+                    discipline through data-driven analytics.
+                </p>
+            </section>
+
+            <section>
+                <div class="section-emoji" style="right: 0; top: 0;">🏭</div>
+                <h2>PROCESS_HISTORY [EXPERIENCE]</h2>
+                <div class="pipeline">
+
+                    <div class="pipeline-item">
+                        <div class="role-card">
+                            <span class="role-title">OPERATIONS SUPERVISOR</span>
+                            <span class="role-meta">NIGERIA LNG LTD // CURRENT</span>
+                            <ul style="padding-left: 20px; color: var(--text-dim); list-style: square;">
+                                <li>Enforce PTW/MOC compliance; Maintain operational risk control.</li>
+                                <li>Maximize LNG yield, minimize flaring, and enforce process safety discipline through
+                                    data-driven analytics.</li>
+                                <li>Provided front-line execution leadership during unit and train shutdowns, start-ups,
+                                    and abnormal operating conditions.</li>
+
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="pipeline-item">
+                        <div class="role-card">
+                            <span class="role-title">SENIOR PROCESS ENGINEER</span>
+                            <span class="role-meta">NIGERIA LNG LTD</span>
+                            <ul style="padding-left: 20px; color: var(--text-dim); list-style: square;">
+                                <li>Safety Assurance: Maintain process ops within Safe Operating Limits (SOL).</li>
+                                <li>Reliability Engineer: Optimization of critical LNG assets.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="pipeline-item">
+                        <div class="role-card">
+                            <span class="role-title">LEAD ANALYST</span>
+                            <span class="role-meta">SHIFT PERFORMANCE REVIEW</span>
+                            <ul style="padding-left: 20px; color: var(--text-dim); list-style: square;">
+                                <li>Data Upskill: Analyze production tags to reduce flaring/emissions.</li>
+                                <li>Loss Elimination: Identify & mitigate equipment efficiency gaps.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <section>
+                <div class="section-emoji" style="right: 0; top: 0;">🧠</div>
+                <h2>MODULES [PROJECTS]</h2>
+                <div class="pipeline" style="border-left-color: var(--accent-amber);">
+                    <div class="pipeline-item">
+                        <div class="role-card">
+                            <span class="role-title">Computer_Vision.exe</span>
+                            <span class="role-meta">TRANSFORMER ARCHITECTURE</span>
+                            <p style="font-size: 0.9rem; color: var(--text-dim);">
+                                Built object detection/panoptic segmentation models for scene understanding.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="pipeline-item">
+                        <div class="role-card">
+                            <span class="role-title">Fraud_Detection_System</span>
+                            <span class="role-meta">XGBOOST // ANOMALY DETECTION</span>
+                            <p style="font-size: 0.9rem; color: var(--text-dim);">
+                                Modeled banking fraud patterns using synthetic datasets and anomaly profiling.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="pipeline-item">
+                        <div class="role-card">
+                            <span class="role-title">Movie_Library_RecSys</span>
+                            <span class="role-meta">ML ENGINE // OOP // OMDB API</span>
+                            <p style="font-size: 0.9rem; color: var(--text-dim);">
+                                Full-stack movie library featuring a custom Machine Learning Recommender Engine for
+                                personalized content suggestions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="section-emoji">🧬</div>
+                <h2>TECH_STACK [INVENTORY]</h2>
+                <div class="tech-grid">
+                    <div class="tech-tag">PYTHON</div>
+                    <div class="tech-tag">SQL</div>
+                    <div class="tech-tag">PYTORCH</div>
+                    <div class="tech-tag">XGBOOST</div>
+                    <div class="tech-tag">SCIKIT-LEARN</div>
+                    <div class="tech-tag">POWER BI</div>
+                    <div class="tech-tag">FASTAPI</div>
+                    <div class="tech-tag">DOCKER</div>
+                    <div class="tech-tag">GIT</div>
+                    <div class="tech-tag">JAVASCRIPT</div>
+
+                </div>
+            </section>
+
+            <footer>
+                SYSTEM_ID: SUPREME_V2.0 // STATUS: OPEN_TO_WORK<br>
+                SECTOR TARG: REFINERY / LNG / PROCESS_SAFETY
+            </footer>
+        </main>
+    </div>
+
+    <!-- SCRIPT: SIMULATE LIVE DATA -->
+    <script>
+        // Update "System Load" randomly to simulate live monitoring
+        setInterval(() => {
+            const load = Math.floor(Math.random() * (65 - 30 + 1) + 30);
+            document.getElementById('load-val').innerText = load + '%';
+            document.getElementById('bar-anim').style.width = load + '%';
+
+            // Randomly change color based on load
+            const bar = document.getElementById('bar-anim');
+            if (load > 60) bar.style.backgroundColor = 'var(--accent-amber)';
+            else bar.style.backgroundColor = 'var(--accent-cyan)';
+
+        }, 2000);
+    </script>
+</body>
+
+</html>
