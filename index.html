@@ -14,30 +14,34 @@
 
     <style>
         :root {
-            /* Industrial / Tech Palette */
-            --bg-color: #0b1120;
-            /* Deep Navy/Black */
-            --panel-bg: rgba(15, 23, 42, 0.85);
-            /* Slightly lighter navy */
-            --panel-border: rgba(56, 189, 248, 0.3);
-            /* Cyan border */
+            /* High-Gloss Steel Blue & Azure Palette */
+            --bg-color: #0d1324;
+            /* Deep, rich professional slate blue */
+            --panel-bg: rgba(30, 41, 59, 0.4);
+            /* High-transparency steel glass */
+            --panel-border: rgba(56, 189, 248, 0.6);
+            /* Vibrant Cyan edge */
+            --glass-shine: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.05) 100%);
 
-            --text-main: #e2e8f0;
+            --text-main: #f8fafc;
+            /* Crisp White for high readability */
             --text-dim: #94a3b8;
+            /* Muted Slate Gray */
 
-            --accent-cyan: #06b6d4;
-            /* Cyan 500 */
-            --accent-amber: #f59e0b;
-            /* Amber 500 (Warnings/Industrial) */
-            --accent-green: #10b981;
-            /* Emerald 500 (Status OK) */
+            --accent-cyan: #00e5ff;
+            /* Hyper-Vibrant Azure Blue */
+            --accent-amber: #ffaa00;
+            /* Deep Technical Orange/Amber */
+            --accent-green: #00ffaa;
+            /* Deep Emerald */
 
-            --grid-line: rgba(56, 189, 248, 0.05);
+            --grid-line: rgba(56, 189, 248, 0.1);
+            /* Cyan Grid */
             --font-tech: 'JetBrains Mono', monospace;
             --font-body: 'Inter', sans-serif;
 
-            --glow-cyan: 0 0 10px rgba(6, 182, 212, 0.4);
-            --glow-green: 0 0 10px rgba(16, 185, 129, 0.4);
+            --glow-cyan: 0 0 20px rgba(0, 229, 255, 0.5), 0 0 40px rgba(0, 229, 255, 0.2);
+            --glow-green: 0 0 20px rgba(0, 255, 170, 0.5);
         }
 
         * {
@@ -63,12 +67,8 @@
             width: 100%;
             height: 100%;
             z-index: -2;
-            background-image:
-                linear-gradient(var(--grid-line) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
-                radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.03) 0%, transparent 40%);
-            background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%;
+            /* Professional Metallic Steel Gradient */
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             pointer-events: none;
         }
 
@@ -90,20 +90,23 @@
 
         .core-container {
             position: relative;
-            width: 60vh;
-            height: 60vh;
+            width: 65vh;
+            height: 65vh;
             transform-style: preserve-3d;
-            transform: rotateX(60deg) rotateZ(0deg);
-            animation: core-spin 30s linear infinite;
+            animation: core-spin 40s linear infinite;
         }
 
         @keyframes core-spin {
             0% {
-                transform: rotateX(60deg) rotateZ(0deg);
+                transform: rotateX(60deg) rotateY(0deg) rotateZ(0deg);
+            }
+
+            50% {
+                transform: rotateX(70deg) rotateY(15deg) rotateZ(180deg);
             }
 
             100% {
-                transform: rotateX(60deg) rotateZ(360deg);
+                transform: rotateX(60deg) rotateY(0deg) rotateZ(360deg);
             }
         }
 
@@ -115,65 +118,192 @@
             transform: translate(-50%, -50%);
             border-style: solid;
             box-sizing: border-box;
+            transform-style: preserve-3d;
+        }
+
+        .core-sphere {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 25%;
+            height: 25%;
+            background: radial-gradient(circle, var(--accent-cyan) 10%, transparent 60%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 60px var(--accent-cyan), 0 0 120px var(--accent-cyan);
+            animation: pulse-sphere 3s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulse-sphere {
+            0% {
+                transform: translate(-50%, -50%) scale(0.9);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 1;
+            }
         }
 
         .ring-1 {
-            width: 100%;
-            height: 100%;
-            border-width: 4px;
-            border-color: rgba(6, 182, 212, 0.9) transparent rgba(6, 182, 212, 0.4) transparent;
-            box-shadow: 0 0 30px rgba(6, 182, 212, 0.6), inset 0 0 30px rgba(6, 182, 212, 0.6);
-            transform: translate(-50%, -50%) translateZ(40px);
-            animation: ring-pulse-1 4s ease-in-out infinite alternate;
+            /* Main Azure Outer */
+            width: 110%;
+            height: 110%;
+            border-width: 2px;
+            border-color: rgba(0, 229, 255, 0.9) transparent rgba(0, 229, 255, 0.2) transparent;
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.6), inset 0 0 30px rgba(0, 229, 255, 0.6);
+            animation: multi-axis-1 12s infinite linear;
         }
 
         .ring-2 {
-            width: 80%;
-            height: 80%;
-            border-width: 6px;
-            border-color: transparent rgba(245, 158, 11, 0.9) transparent rgba(245, 158, 11, 0.4);
-            box-shadow: 0 0 40px rgba(245, 158, 11, 0.6), inset 0 0 40px rgba(245, 158, 11, 0.6);
-            transform: translate(-50%, -50%) translateZ(0px) rotateZ(45deg);
+            /* Amber Inner Grid */
+            width: 90%;
+            height: 90%;
+            border-width: 4px;
+            border-color: transparent rgba(255, 170, 0, 0.9) transparent rgba(255, 170, 0, 0.2);
+            box-shadow: 0 0 40px rgba(255, 170, 0, 0.6), inset 0 0 40px rgba(255, 170, 0, 0.6);
+            animation: multi-axis-2 15s infinite linear reverse;
         }
 
         .ring-3 {
-            width: 60%;
-            height: 60%;
-            border-width: 8px;
-            border-color: rgba(236, 72, 153, 0.9) transparent rgba(236, 72, 153, 0.4) transparent;
-            /* Magenta */
-            box-shadow: 0 0 50px rgba(236, 72, 153, 0.8), inset 0 0 50px rgba(236, 72, 153, 0.8);
-            transform: translate(-50%, -50%) translateZ(-40px) rotateZ(-45deg);
-            animation: ring-pulse-2 3s ease-in-out infinite alternate;
+            /* Cyan Core Shield */
+            width: 70%;
+            height: 70%;
+            border-width: 6px;
+            border-color: rgba(0, 229, 255, 0.9) transparent rgba(0, 229, 255, 0.4) transparent;
+            box-shadow: 0 0 50px rgba(0, 229, 255, 0.7), inset 0 0 50px rgba(0, 229, 255, 0.7);
+            animation: multi-axis-3 8s infinite linear;
         }
 
         .ring-4 {
-            width: 40%;
-            height: 40%;
-            border-width: 10px;
-            border-color: transparent rgba(16, 185, 129, 0.9) transparent rgba(16, 185, 129, 0.4);
-            /* Green */
-            box-shadow: 0 0 60px rgba(16, 185, 129, 0.8), inset 0 0 60px rgba(16, 185, 129, 0.8);
-            transform: translate(-50%, -50%) translateZ(-80px);
+            /* Solid Core Accent */
+            width: 45%;
+            height: 45%;
+            border-width: 8px;
+            border-color: rgba(0, 255, 170, 0.9) rgba(0, 255, 170, 0.2);
+            box-shadow: 0 0 60px rgba(0, 255, 170, 0.8), inset 0 0 60px rgba(0, 255, 170, 0.8);
+            animation: multi-axis-4 5s infinite ease-in-out alternate;
         }
 
-        @keyframes ring-pulse-1 {
+        @keyframes multi-axis-1 {
             0% {
-                transform: translate(-50%, -50%) translateZ(10px) scale(0.95);
+                transform: translate(-50%, -50%) translateZ(40px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
             }
 
             100% {
-                transform: translate(-50%, -50%) translateZ(60px) scale(1.05);
+                transform: translate(-50%, -50%) translateZ(40px) rotateX(20deg) rotateY(10deg) rotateZ(360deg);
             }
         }
 
-        @keyframes ring-pulse-2 {
+        @keyframes multi-axis-2 {
             0% {
-                transform: translate(-50%, -50%) translateZ(-20px) scale(1.05) rotateZ(-45deg);
+                transform: translate(-50%, -50%) translateZ(0px) rotateX(25deg) rotateY(0deg) rotateZ(0deg);
             }
 
             100% {
-                transform: translate(-50%, -50%) translateZ(-60px) scale(0.95) rotateZ(-45deg);
+                transform: translate(-50%, -50%) translateZ(0px) rotateX(-25deg) rotateY(20deg) rotateZ(360deg);
+            }
+        }
+
+        @keyframes multi-axis-3 {
+            0% {
+                transform: translate(-50%, -50%) translateZ(-40px) rotateX(-15deg) rotateY(-15deg) rotateZ(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) translateZ(-40px) rotateX(15deg) rotateY(15deg) rotateZ(360deg);
+            }
+        }
+
+        @keyframes multi-axis-4 {
+            0% {
+                transform: translate(-50%, -50%) translateZ(-80px) scale(0.8) rotateZ(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) translateZ(-40px) scale(1.2) rotateZ(180deg);
+            }
+        }
+
+        /* --- SENSOR DRONES (ROBOTICS ANIMATION) --- */
+        .drone-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-style: preserve-3d;
+        }
+
+        .orbit-1 {
+            width: 140%;
+            height: 140%;
+            animation: orbit-path-1 8s infinite linear;
+        }
+
+        .orbit-2 {
+            width: 160%;
+            height: 160%;
+            animation: orbit-path-2 12s infinite linear reverse;
+        }
+
+        .orbit-3 {
+            width: 120%;
+            height: 120%;
+            animation: orbit-path-3 10s infinite linear;
+        }
+
+        @keyframes orbit-path-1 {
+            0% {
+                transform: translate(-50%, -50%) rotateX(60deg) rotateY(20deg) rotateZ(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotateX(60deg) rotateY(20deg) rotateZ(360deg);
+            }
+        }
+
+        @keyframes orbit-path-2 {
+            0% {
+                transform: translate(-50%, -50%) rotateX(45deg) rotateY(-45deg) rotateZ(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotateX(45deg) rotateY(-45deg) rotateZ(360deg);
+            }
+        }
+
+        @keyframes orbit-path-3 {
+            0% {
+                transform: translate(-50%, -50%) rotateX(80deg) rotateY(0deg) rotateZ(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotateX(80deg) rotateY(0deg) rotateZ(360deg);
+            }
+        }
+
+        .drone {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 14px;
+            height: 14px;
+            background: var(--accent-amber);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 20px var(--accent-amber), 0 0 40px var(--accent-amber);
+            animation: drone-pulse 1.5s infinite alternate;
+        }
+
+        @keyframes drone-pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
             }
         }
 
@@ -203,14 +333,17 @@
 
         .panel {
             background: var(--panel-bg);
+            background-image: var(--glass-shine);
             border: 1px solid var(--panel-border);
-            backdrop-filter: blur(8px);
+            border-left: 3px solid var(--accent-cyan);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             padding: 20px;
-            border-radius: 4px;
-            /* Slightly squarer for industrial look */
+            border-radius: 8px;
             margin-bottom: 20px;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
         }
 
         .panel::before {
@@ -288,12 +421,13 @@
         h1 {
             font-family: var(--font-tech);
             font-size: 3rem;
-            font-weight: 700;
+            font-weight: 800;
             color: #fff;
             text-transform: uppercase;
-            letter-spacing: -2px;
+            letter-spacing: -1px;
             position: relative;
             display: inline-block;
+            text-shadow: var(--glow-cyan);
         }
 
         h1::after {
@@ -365,16 +499,21 @@
         }
 
         .role-card {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(30, 41, 59, 0.4);
+            background-image: var(--glass-shine);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 0 12px 12px 12px;
-            transition: transform 0.2s;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 24px;
+            border-radius: 12px;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s, border-color 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .role-card:hover {
             transform: translateX(5px);
             border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
         }
 
         .role-title {
@@ -411,7 +550,7 @@
         }
 
         .tech-tag:hover {
-            background: rgba(6, 182, 212, 0.1);
+            background: rgba(2, 132, 199, 0.1);
             box-shadow: var(--glow-cyan);
             border-color: var(--accent-cyan);
         }
@@ -434,7 +573,7 @@
 
         a:hover {
             text-decoration: underline;
-            color: #fff;
+            color: var(--accent-amber);
         }
 
         /* --- DECORATIVE ELEMENTS (REPLACING EMOJIS) --- */
@@ -512,6 +651,22 @@
     <div class="schematic-bg"></div>
     <div class="ai-core">
         <div class="core-container">
+            <!-- Robotics Sensor Drones -->
+            <div class="drone-orbit orbit-1">
+                <div class="drone"></div>
+            </div>
+            <div class="drone-orbit orbit-2">
+                <div class="drone"
+                    style="background: var(--accent-cyan); box-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-cyan);">
+                </div>
+            </div>
+            <div class="drone-orbit orbit-3">
+                <div class="drone"
+                    style="background: var(--accent-green); box-shadow: 0 0 20px var(--accent-green), 0 0 40px var(--accent-green);">
+                </div>
+            </div>
+            <!-- Central Holographic Core Sphere -->
+            <div class="core-sphere"></div>
             <div class="core-ring ring-1"></div>
             <div class="core-ring ring-2"></div>
             <div class="core-ring ring-3"></div>
@@ -560,7 +715,8 @@
                     <span class="metric-val">MAX</span>
                 </div>
                 <!-- Simulated graph bar -->
-                <div style="height: 4px; width: 100%; background: #1e293b; margin-top: 10px; overflow: hidden;">
+                <div
+                    style="height: 4px; width: 100%; background: rgba(2, 132, 199, 0.1); margin-top: 10px; overflow: hidden;">
                     <div id="bar-anim"
                         style="height: 100%; width: 50%; background: var(--accent-cyan); transition: width 0.5s;"></div>
                 </div>
@@ -597,10 +753,30 @@
                     <strong>Bridging the gap between heavy industry operations and production-grade AI
                         systems.</strong><br><br>
                     Data Scientist with 7+ years of engineering experience integrating scalable machine
-                    learning—including Agentic AI and Recommender Systems—into critical energy and utility pipelines to
+                    learning—including Agentic AI, Recommender Systems, and Autonomous Robotics—into critical energy and
+                    utility pipelines to
                     drive autonomous optimization and safety. Expert in architecting high-volume data pipelines and
                     deploying models that create measurable business impact.
                 </p>
+            </section>
+
+            <section class="panel">
+                <div class="section-decorator"></div>
+                <h2>RESEARCH_INTERESTS [FOCUS]</h2>
+                <div class="tech-grid">
+                    <div class="tech-tag" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">VISION
+                        TRANSFORMERS &amp; PANOPTIC SGM.</div>
+                    <div class="tech-tag" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">QUANTILE
+                        QUERY POOLING (QQP)</div>
+                    <div class="tech-tag" style="border-color: var(--accent-amber); color: var(--accent-amber);">
+                        AUTONOMOUS ROBOTICS &amp; PERCEPTION</div>
+                    <div class="tech-tag" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">AGENTIC
+                        AI &amp; AUTONOMOUS SYS.</div>
+                    <div class="tech-tag" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">SCALABLE
+                        RAG ARCHITECTURES</div>
+                    <div class="tech-tag" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">FEDERATED
+                        LEARNING</div>
+                </div>
             </section>
 
             <section>
