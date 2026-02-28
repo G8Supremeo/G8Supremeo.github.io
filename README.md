@@ -13,13 +13,7 @@ The interface is built to resemble an industrial control panel or futuristic AI 
 *   **Dynamic CSS Cropping:** The profile picture dynamically crops a full-body structural photograph down to a perfect headshot frame entirely via CSS `object-position` styling.
 *   **Live Sensor Simulation:** A lightweight embedded script simulates real-time variations in system load and latency metrics within the sidebar panels.
 
-## Hosting Instructions (GitHub Pages), if you want to create one for yourself
-1. Commit and push something like this directory (containing `index.html` and `Picture.jpeg`) to your GitHub repository.
-2. In the repository on GitHub, navigate to **Settings**.
-3. Go to the **Pages** section on the left sidebar.
-4. Under the **Build and deployment** section, select **Deploy from a branch**.
-5. Select your `main` or `master` branch and the `/ (root)` folder, then hit **Save**.
-6. Wait 1-2 minutes, and your futuristic portfolio will be live at `https://yourusername.github.io/your-repository-name/`.
+Thank you for stopping by! 
 
 ---
 *SYS_ID: SUPREME_V2.0 // DIRECTIVE: PROCESS & PREDICT*
