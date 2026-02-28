@@ -55,59 +55,125 @@
             /* Hide horizontal scroll from animations */
         }
 
-        /* --- BACKGROUND: SCHEMATIC GRID & TURBINES --- */
+        /* --- BACKGROUND: SCHEMATIC GRID & AI CORE --- */
         .schematic-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+            z-index: -2;
             background-image:
                 linear-gradient(var(--grid-line) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-            background-size: 40px 40px;
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+                radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.03) 0%, transparent 40%);
+            background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%;
             pointer-events: none;
         }
 
-        .turbine {
+        .ai-core {
             position: fixed;
-            border: 2px dashed rgba(6, 182, 212, 0.15);
-            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 100vh;
+            transform: translate(-50%, -50%);
+            perspective: 800px;
             z-index: -1;
             pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
-        .turbine-1 {
-            width: 80vh;
-            height: 80vh;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: spin 60s linear infinite;
-        }
-
-        .turbine-2 {
+        .core-container {
+            position: relative;
             width: 60vh;
             height: 60vh;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border-style: solid;
-            border-width: 1px;
-            border-color: rgba(6, 182, 212, 0.1);
-            animation: spin-rev 40s linear infinite;
+            transform-style: preserve-3d;
+            transform: rotateX(60deg) rotateZ(0deg);
+            animation: core-spin 30s linear infinite;
         }
 
-        @keyframes spin {
+        @keyframes core-spin {
+            0% {
+                transform: rotateX(60deg) rotateZ(0deg);
+            }
+
             100% {
-                transform: translate(-50%, -50%) rotate(360deg);
+                transform: rotateX(60deg) rotateZ(360deg);
             }
         }
 
-        @keyframes spin-rev {
+        .core-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            border-style: solid;
+            box-sizing: border-box;
+        }
+
+        .ring-1 {
+            width: 100%;
+            height: 100%;
+            border-width: 4px;
+            border-color: rgba(6, 182, 212, 0.9) transparent rgba(6, 182, 212, 0.4) transparent;
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.6), inset 0 0 30px rgba(6, 182, 212, 0.6);
+            transform: translate(-50%, -50%) translateZ(40px);
+            animation: ring-pulse-1 4s ease-in-out infinite alternate;
+        }
+
+        .ring-2 {
+            width: 80%;
+            height: 80%;
+            border-width: 6px;
+            border-color: transparent rgba(245, 158, 11, 0.9) transparent rgba(245, 158, 11, 0.4);
+            box-shadow: 0 0 40px rgba(245, 158, 11, 0.6), inset 0 0 40px rgba(245, 158, 11, 0.6);
+            transform: translate(-50%, -50%) translateZ(0px) rotateZ(45deg);
+        }
+
+        .ring-3 {
+            width: 60%;
+            height: 60%;
+            border-width: 8px;
+            border-color: rgba(236, 72, 153, 0.9) transparent rgba(236, 72, 153, 0.4) transparent;
+            /* Magenta */
+            box-shadow: 0 0 50px rgba(236, 72, 153, 0.8), inset 0 0 50px rgba(236, 72, 153, 0.8);
+            transform: translate(-50%, -50%) translateZ(-40px) rotateZ(-45deg);
+            animation: ring-pulse-2 3s ease-in-out infinite alternate;
+        }
+
+        .ring-4 {
+            width: 40%;
+            height: 40%;
+            border-width: 10px;
+            border-color: transparent rgba(16, 185, 129, 0.9) transparent rgba(16, 185, 129, 0.4);
+            /* Green */
+            box-shadow: 0 0 60px rgba(16, 185, 129, 0.8), inset 0 0 60px rgba(16, 185, 129, 0.8);
+            transform: translate(-50%, -50%) translateZ(-80px);
+        }
+
+        @keyframes ring-pulse-1 {
+            0% {
+                transform: translate(-50%, -50%) translateZ(10px) scale(0.95);
+            }
+
             100% {
-                transform: translate(-50%, -50%) rotate(-360deg);
+                transform: translate(-50%, -50%) translateZ(60px) scale(1.05);
+            }
+        }
+
+        @keyframes ring-pulse-2 {
+            0% {
+                transform: translate(-50%, -50%) translateZ(-20px) scale(1.05) rotateZ(-45deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) translateZ(-60px) scale(0.95) rotateZ(-45deg);
             }
         }
 
@@ -371,23 +437,71 @@
             color: #fff;
         }
 
-        /* --- DECORATIVE EMOJIS --- */
-        .section-emoji {
+        /* --- DECORATIVE ELEMENTS (REPLACING EMOJIS) --- */
+        .section-decorator {
             position: absolute;
             right: 20px;
-            top: -20px;
-            font-size: 6rem;
+            top: -15px;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--accent-cyan);
             opacity: 0.15;
-            filter: grayscale(100%) drop-shadow(0 0 10px var(--accent-cyan));
-            pointer-events: none;
             z-index: 1;
             transition: all 0.5s ease;
+            box-shadow: var(--glow-cyan);
         }
 
-        .panel:hover .section-emoji {
-            opacity: 0.3;
-            transform: rotate(10deg) scale(1.1);
-            filter: grayscale(0%) drop-shadow(0 0 15px var(--accent-cyan));
+        .section-decorator::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-amber);
+            box-shadow: 0 0 10px var(--accent-amber);
+            border-radius: 50%;
+        }
+
+        .panel:hover .section-decorator {
+            opacity: 0.4;
+            transform: rotate(45deg) scale(1.1);
+        }
+
+        /* --- PROFILE PICTURE --- */
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        .profile-pic-frame {
+            width: 115px;
+            height: 115px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-cyan);
+            border-bottom: 2px solid var(--accent-amber);
+            padding: 4px;
+            box-shadow: var(--glow-cyan);
+            position: relative;
+            flex-shrink: 0;
+            /* Heavy Zoom and Offset for the Full Body Picture */
+            background: var(--bg-color) url('Picture.jpeg') no-repeat;
+            background-size: 300%;
+            background-position: center 12%;
+        }
+
+        .profile-pic-frame::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 4px;
+            background: var(--accent-amber);
+            border-radius: 2px;
         }
     </style>
 </head>
@@ -396,8 +510,14 @@
 
     <!-- Background Elements -->
     <div class="schematic-bg"></div>
-    <div class="turbine turbine-1"></div>
-    <div class="turbine turbine-2"></div>
+    <div class="ai-core">
+        <div class="core-container">
+            <div class="core-ring ring-1"></div>
+            <div class="core-ring ring-2"></div>
+            <div class="core-ring ring-3"></div>
+            <div class="core-ring ring-4"></div>
+        </div>
+    </div>
 
     <div class="wrapper">
 
@@ -428,12 +548,12 @@
                     <span id="load-val">42%</span>
                 </div>
                 <div class="metric-row">
-                    <span>PROCESS_SAFETY</span>
+                    <span>PROCESS_ENGINEER/SAFETY</span>
                     <span class="metric-val">OPTIMAL</span>
                 </div>
                 <div class="metric-row">
-                    <span>RELIABILITY</span>
-                    <span class="metric-val">99.9%</span>
+                    <span>ML_INFERENCE</span>
+                    <span class="metric-val" style="color: var(--accent-cyan);">12ms</span>
                 </div>
                 <div class="metric-row">
                     <span>LNG_YIELD</span>
@@ -457,64 +577,76 @@
         <!-- MAIN CONTENT -->
         <main>
             <header class="main-header">
-                <h1>SUPREME O.</h1>
-                <div class="subtitle">
-                    OPERATIONS & PROCESS SAFETY LEADER<br>
-                    LNG // UTILITIES // PRODUCTION OPTIMIZATION
+                <div class="header-top">
+                    <!-- The empty div acts as the profile frame, cropping the image heavily via CSS background -->
+                    <div class="profile-pic-frame"></div>
+                    <div>
+                        <h1>SUPREME OGHENEWOAKPO</h1>
+                        <div class="subtitle">
+                            DATA SCIENTIST &amp; OPERATIONS LEADER<br>
+                            MACHINE LEARNING // AGENTIC AI // PROCESS ENGINEERING
+                        </div>
+                    </div>
                 </div>
             </header>
 
             <section class="panel">
-                <div class="section-emoji">⚡</div>
+                <div class="section-decorator"></div>
                 <h2>LOG: SUMMARY</h2>
                 <p style="color: var(--text-dim);">
-                    Operations and process safety leader with extensive runtime in LNG utilities, production trains, and
-                    shipping operations.
-                    Currently executing as Operations Supervisor at Nigeria LNG Ltd.
-                    <br><br>
-                    <strong>PRIMARY DIRECTIVE:</strong> Maximize LNG yield, minimize flaring, and enforce process safety
-                    discipline through data-driven analytics.
+                    <strong>Bridging the gap between heavy industry operations and production-grade AI
+                        systems.</strong><br><br>
+                    Data Scientist with 7+ years of engineering experience integrating scalable machine
+                    learning—including Agentic AI and Recommender Systems—into critical energy and utility pipelines to
+                    drive autonomous optimization and safety. Expert in architecting high-volume data pipelines and
+                    deploying models that create measurable business impact.
                 </p>
             </section>
 
             <section>
-                <div class="section-emoji" style="right: 0; top: 0;">🏭</div>
+                <div class="section-decorator" style="right: 0; top: 0;"></div>
                 <h2>PROCESS_HISTORY [EXPERIENCE]</h2>
                 <div class="pipeline">
 
                     <div class="pipeline-item">
                         <div class="role-card">
-                            <span class="role-title">OPERATIONS SUPERVISOR</span>
-                            <span class="role-meta">NIGERIA LNG LTD // CURRENT</span>
+                            <span class="role-title">SENIOR ANALYTICS &amp; PROCESS TECHNOLOGIST</span>
+                            <span class="role-meta">NIGERIA LNG LTD // APR 2022 - PRESENT</span>
                             <ul style="padding-left: 20px; color: var(--text-dim); list-style: square;">
-                                <li>Enforce PTW/MOC compliance; Maintain operational risk control.</li>
-                                <li>Maximize LNG yield, minimize flaring, and enforce process safety discipline through
-                                    data-driven analytics.</li>
-                                <li>Provided front-line execution leadership during unit and train shutdowns, start-ups,
-                                    and abnormal operating conditions.</li>
-
+                                <li>Architected enterprise analytics pipelines supporting high-volume data ingestion for
+                                    critical operations.</li>
+                                <li>Built and deployed ML models for anomaly detection, reducing equipment downtime by
+                                    approximately 12%.</li>
+                                <li>Led cross-functional teams in deep-dive analysis to drive platform optimization and
+                                    strategic planning.</li>
                             </ul>
                         </div>
                     </div>
 
                     <div class="pipeline-item">
                         <div class="role-card">
-                            <span class="role-title">SENIOR PROCESS ENGINEER</span>
-                            <span class="role-meta">NIGERIA LNG LTD</span>
+                            <span class="role-title">SENIOR PROCESS TECHNOLOGIST</span>
+                            <span class="role-meta">NIGERIA LNG LTD // MAR 2018 - MAR 2022</span>
                             <ul style="padding-left: 20px; color: var(--text-dim); list-style: square;">
-                                <li>Safety Assurance: Maintain process ops within Safe Operating Limits (SOL).</li>
-                                <li>Reliability Engineer: Optimization of critical LNG assets.</li>
+                                <li>Led execution of planned unit shutdowns and start-ups (30–45 day durations) across
+                                    LNG process trains and utilities.</li>
+                                <li>Migrated manual reporting to automated Power BI dashboards, saving more than 15
+                                    operational hours weekly.</li>
+                                <li>Developed statistical forecasting models for utility optimization, directly
+                                    influencing budget planning.</li>
                             </ul>
                         </div>
                     </div>
 
                     <div class="pipeline-item">
                         <div class="role-card">
-                            <span class="role-title">LEAD ANALYST</span>
-                            <span class="role-meta">SHIFT PERFORMANCE REVIEW</span>
+                            <span class="role-title">WELL TESTING SPECIALIST</span>
+                            <span class="role-meta">SLB (SCHLUMBERGER) // AUG 2017 - MAR 2018</span>
                             <ul style="padding-left: 20px; color: var(--text-dim); list-style: square;">
-                                <li>Data Upskill: Analyze production tags to reduce flaring/emissions.</li>
-                                <li>Loss Elimination: Identify & mitigate equipment efficiency gaps.</li>
+                                <li>Analyzed real-time sensor data to improve operational safety and efficiency for
+                                    client assets.</li>
+                                <li>Executed surface well testing operations and real-time multiphase flow measurements
+                                    in high-risk environments.</li>
                             </ul>
                         </div>
                     </div>
@@ -523,9 +655,42 @@
             </section>
 
             <section>
-                <div class="section-emoji" style="right: 0; top: 0;">🧠</div>
+                <div class="section-decorator" style="right: 0; top: 0;"></div>
                 <h2>MODULES [PROJECTS]</h2>
                 <div class="pipeline" style="border-left-color: var(--accent-amber);">
+                    <div class="pipeline-item">
+                        <div class="role-card">
+                            <span class="role-title">Multi-Agent Ops_Intelligence</span>
+                            <span class="role-meta">LANGGRAPH // INCIDENT RESPONSE</span>
+                            <p style="font-size: 0.9rem; color: var(--text-dim);">
+                                Designed an agentic AI system with episodic memory to autonomously triage, analyze, and
+                                remediate production pipeline failures.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="pipeline-item">
+                        <div class="role-card">
+                            <span class="role-title">E-Commerce_Recommendation_Engine</span>
+                            <span class="role-meta">PYKEEN // AUTOGLUON // PYSPARK</span>
+                            <p style="font-size: 0.9rem; color: var(--text-dim);">
+                                Engineered a full-stack, multi-stage ranking pipeline supporting personalized feeds and
+                                cross-selling using knowledge graphs.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="pipeline-item">
+                        <div class="role-card">
+                            <span class="role-title">Federated_Fraud_Detection</span>
+                            <span class="role-meta">APACHE BEAM // DIFFERENTIAL PRIVACY</span>
+                            <p style="font-size: 0.9rem; color: var(--text-dim);">
+                                Architected a privacy-preserving fraud scoring engine capable of sub-100ms inference
+                                using distributed task routing.
+                            </p>
+                        </div>
+                    </div>
+
                     <div class="pipeline-item">
                         <div class="role-card">
                             <span class="role-title">Computer_Vision.exe</span>
@@ -535,50 +700,37 @@
                             </p>
                         </div>
                     </div>
-
-                    <div class="pipeline-item">
-                        <div class="role-card">
-                            <span class="role-title">Fraud_Detection_System</span>
-                            <span class="role-meta">XGBOOST // ANOMALY DETECTION</span>
-                            <p style="font-size: 0.9rem; color: var(--text-dim);">
-                                Modeled banking fraud patterns using synthetic datasets and anomaly profiling.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="pipeline-item">
-                        <div class="role-card">
-                            <span class="role-title">Movie_Library_RecSys</span>
-                            <span class="role-meta">ML ENGINE // OOP // OMDB API</span>
-                            <p style="font-size: 0.9rem; color: var(--text-dim);">
-                                Full-stack movie library featuring a custom Machine Learning Recommender Engine for
-                                personalized content suggestions.
-                            </p>
-                        </div>
-                    </div>
                 </div>
             </section>
 
             <section class="panel">
-                <div class="section-emoji">🧬</div>
+                <div class="section-decorator"></div>
                 <h2>TECH_STACK [INVENTORY]</h2>
                 <div class="tech-grid">
-                    <div class="tech-tag">PYTHON</div>
-                    <div class="tech-tag">SQL</div>
+                    <div class="tech-tag" style="border-color: var(--accent-amber); color: var(--accent-amber);">
+                        LANGGRAPH</div>
+                    <div class="tech-tag" style="border-color: var(--accent-amber); color: var(--accent-amber);">AGENTIC
+                        AI</div>
                     <div class="tech-tag">PYTORCH</div>
+                    <div class="tech-tag">PYTHON</div>
+                    <div class="tech-tag">RAG</div>
+                    <div class="tech-tag">AUTOGLUON</div>
+                    <div class="tech-tag">PYSPARK</div>
                     <div class="tech-tag">XGBOOST</div>
-                    <div class="tech-tag">SCIKIT-LEARN</div>
-                    <div class="tech-tag">POWER BI</div>
-                    <div class="tech-tag">FASTAPI</div>
-                    <div class="tech-tag">DOCKER</div>
-                    <div class="tech-tag">GIT</div>
-                    <div class="tech-tag">JAVASCRIPT</div>
-
+                    <div class="tech-tag">POLARS</div>
+                    <div class="tech-tag">VISION TRANSFORMERS</div>
+                    <div class="tech-tag">APACHE BEAM</div>
+                    <div class="tech-tag">GCP</div>
+                    <div class="tech-tag">TERRAFORM</div>
+                    <div class="tech-tag">DOCKER / K8S</div>
+                    <div class="tech-tag">SQL</div>
+                    <div class="tech-tag">REACT / JS</div>
                 </div>
             </section>
 
             <footer>
                 SYSTEM_ID: SUPREME_V2.0 // STATUS: OPEN_TO_WORK<br>
-                SECTOR TARG: REFINERY / LNG / PROCESS_SAFETY
+                SECTOR TARG: DATA SCIENCE / MACHINE LEARNING / PROCESS ENGINEERING / PROCESS SAFETY
             </footer>
         </main>
     </div>
